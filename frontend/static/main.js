@@ -6,6 +6,7 @@ const tg = window.Telegram.WebApp;
 
 // сообщаем Telegram, что мини-апп готов
 tg.ready();
+tg.expand();
 
 const loginBtn = document.getElementById("login-btn");
 
