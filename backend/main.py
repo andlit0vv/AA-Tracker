@@ -101,9 +101,9 @@ def check_telegram_auth(init_data: str) -> bool:
 
 @app.route("/auth/telegram", methods=["POST"])
 def auth_telegram():
-    payload = request.json
+    payload = request.get_json(force=True, silent=True) or {}
     init_data = payload.get("initData")
-
+    print("INIT DATA RAW:", init_data)  # ← ВАЖНО
     if not init_data:
         return jsonify({"status": "error"}), 400
 
