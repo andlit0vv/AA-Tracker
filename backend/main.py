@@ -80,7 +80,7 @@ def check_telegram_auth(init_data: str) -> bool:
 
     received_hash = parsed_data.pop("hash")[0]
 
-    # Telegram WebApp: signature НЕ участвует в hash
+    # signature не участвует
     parsed_data.pop("signature", None)
 
     data_check_string = "\n".join(
@@ -88,7 +88,11 @@ def check_telegram_auth(init_data: str) -> bool:
         for key, value in sorted(parsed_data.items())
     )
 
-    secret_key = hashlib.sha256(BOT_TOKEN.encode()).digest()
+    secret_key = hmac.new(
+        key=b"WebAppData",
+        msg=BOT_TOKEN.encode(),
+        digestmod=hashlib.sha256
+    ).digest()
 
     calculated_hash = hmac.new(
         secret_key,
@@ -97,6 +101,7 @@ def check_telegram_auth(init_data: str) -> bool:
     ).hexdigest()
 
     return calculated_hash == received_hash
+
 
 
 @app.route("/auth/telegram", methods=["POST"])
