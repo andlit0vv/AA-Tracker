@@ -10,7 +10,6 @@ from psycopg2.extras import RealDictCursor
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-
 # =========================
 # App init
 # =========================
