@@ -3,6 +3,8 @@ console.log("main.js OK");
 
 // Сам скрипт
 const tg = window.Telegram.WebApp;
+const initData = tg.initData;
+
 
 // сообщаем Telegram, что мини-апп готов
 tg.ready();
