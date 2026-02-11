@@ -23,3 +23,4 @@ def telegram_auth():
     session["user_id"] = user["id"]
 
     return jsonify({"status": "ok"})
+
