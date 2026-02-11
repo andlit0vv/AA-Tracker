@@ -85,7 +85,7 @@ def check_telegram_auth(init_data: str) -> bool:
         return False
 
     received_hash = parsed_data.pop("hash")[0]
-    parsed_data.pop("signature", None)
+    # parsed_data.pop("signature", None)
 
     data_check_string = "\n".join(
         f"{key}={value[0]}"
