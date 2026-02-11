@@ -50,14 +50,14 @@ def save_user(telegram_id: int, username: str | None, first_name: str | None):
 
     cur.execute(
         """
-        INSERT INTO users (user_id, telegram_id, username, first_name)
-        VALUES (%s, %s, %s, %s)
-        ON CONFLICT (user_id)
+        INSERT INTO users (telegram_id, username, first_name)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (telegram_id)
         DO UPDATE SET
             username = EXCLUDED.username,
             first_name = EXCLUDED.first_name
         """,
-        (telegram_id, telegram_id, username, first_name)
+        (telegram_id, username, first_name)
     )
 
     conn.commit()
