@@ -7,6 +7,7 @@ const loginBtn = document.getElementById("login-btn");
 
 loginBtn.addEventListener("click", async () => {
     const initData = tg.initData;
+    console.log("initData:", tg.initData);
 
     if (!initData) {
         alert("Open this app via Telegram");
