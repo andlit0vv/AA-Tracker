@@ -1,48 +1,49 @@
-// Проверка работы 
-console.log("main.js OK");
+// Инициализация Telegram Web App
+const tg = window.Telegram?.WebApp;
 
-// Сам скрипт
-const tg = window.Telegram.WebApp;
-const initData = tg.initData;
-
-
-// сообщаем Telegram, что мини-апп готов
-tg.ready();
-tg.expand();
-
+// Кнопка "Войти"
 const loginBtn = document.getElementById("login-btn");
 
+// Если Web App не открыт в Telegram — скрываем кнопку
+// (initData будет undefined при прямом открытии в браузере)
+if (!tg?.initData) {
+    loginBtn.textContent = "Открыть в Telegram";
+    loginBtn.disabled = true;
+}
+
+// Обработчик для логина
 loginBtn.addEventListener("click", async () => {
-    const initData = tg.initData;
-    console.log("initData sent to backend:", initData);
-
-    if (!initData) {
-        alert("Открой приложение через Telegram");
-        return;
-    }
-
     try {
-        const response = await fetch(
-            "https://aa-tracker.onrender.com/auth/telegram",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ initData })
-            }
-        );
+        // Берем initData, которую Telegram передает при запуске
+        const initData = tg.initData;
 
-        const data = await response.json();
-        console.log("Backend response:", data);
+        // Отправляем на сервер для валидации
+        const res = await fetch("/auth/signin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ initData })
+        });
 
-        if (data.status === "ok") {
-            alert("Успешная авторизация");
-        } else {
-            alert("Ошибка авторизации");
+        if (!res.ok) {
+            throw new Error("Auth failed");
         }
+
+        const isAuth = await res.json();
+
+        if (isAuth) {
+            // Авторизация успешна — переписываем UI
+            document.querySelector(".container").innerHTML = `
+                <h2>Вы успешно авторизованы</h2>
+                <p>Добро пожаловать!</p>
+            `;
+        } else {
+            alert("Не удалось авторизовать");
+        }
+
     } catch (err) {
         console.error(err);
-        alert("Ошибка соединения с сервером");
+        alert("Ошибка авторизации");
     }
 });
