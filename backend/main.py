@@ -29,7 +29,7 @@ CORS(
 # Environment
 # =========================
 
-BOT_TOKEN = os.environ.get("8401980133:AAG74o2GcCi2WjceR-p99DRbjFSIfgjuWU4")
+BOT_TOKEN = "8401980133:AAG74o2GcCi2WjceR-p99DRbjFSIfgjuWU4"
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
