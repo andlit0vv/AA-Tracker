@@ -29,3 +29,4 @@ def verify_telegram_auth(data: dict) -> dict:
         raise ValueError("Invalid Telegram hash")
 
     return data
+
