@@ -1,7 +1,5 @@
-// Проверка работы 
 console.log("main.js OK");
 
-// Сам скрипт
 const tg = window.Telegram.WebApp;
 
 // сообщаем Telegram, что мини-апп готов
