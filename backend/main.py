@@ -1,39 +1,25 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
+from auth import verify_telegram_auth
+from db import upsert_user
 import os
-import json
-from urllib.parse import parse_qs
 
 app = Flask(__name__)
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-
-@app.route("/auth/signin", methods=["POST"])
-def auth_signin():
+@app.post("/auth/telegram")
+def telegram_auth():
     payload = request.get_json()
 
-    if not payload or "initData" not in payload:
-        return jsonify(False), 400
+    if not payload:
+        return jsonify({"error": "bad request"}), 400
 
-    init_data = payload["initData"]
+    try:
+        user = verify_telegram_auth(payload.copy())
+    except Exception:
+        return jsonify({"error": "unauthorized"}), 401
 
-    if not check_telegram_auth(init_data, BOT_TOKEN):
-        return jsonify(False), 403
+    upsert_user(user)
 
-    parsed = parse_qs(init_data)
-    user_raw = parsed.get("user")
+    session["user_id"] = user["id"]
 
-    if not user_raw:
-        return jsonify(False), 400
-
-    user = json.loads(user_raw[0])
-    telegram_id = user["id"]
-
-    print("Telegram user:", telegram_id)
-
-    # тут дальше:
-    # - БД
-    # - сессия
-    # - JWT
-    # - cookie
-
-    return jsonify(True)
+    return jsonify({"status": "ok"})
