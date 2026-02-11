@@ -106,7 +106,7 @@ def check_telegram_webapp_auth(init_data: str):
     return debug
 
 
-@app.route("/auth/telegram", methods=["POST", "OPTIONS"])
+@app.route("/auth/telegram", methods=["POST"])
 def auth_telegram():
     payload = request.get_json(force=True, silent=True) or {}
     init_data = payload.get("initData")
