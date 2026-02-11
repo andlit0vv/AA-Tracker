@@ -14,6 +14,7 @@ const loginBtn = document.getElementById("login-btn");
 
 loginBtn.addEventListener("click", async () => {
     const initData = tg.initData;
+    console.log("initData sent to backend:", initData);
 
     if (!initData) {
         alert("Открой приложение через Telegram");
