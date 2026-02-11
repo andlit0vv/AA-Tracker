@@ -1,8 +1,5 @@
-console.log("main.js OK");
-
 const tg = window.Telegram.WebApp;
 
-// сообщаем Telegram, что мини-апп готов
 tg.ready();
 tg.expand();
 
@@ -12,7 +9,7 @@ loginBtn.addEventListener("click", async () => {
     const initData = tg.initData;
 
     if (!initData) {
-        alert("Открой приложение через Telegram");
+        alert("Open this app via Telegram");
         return;
     }
 
@@ -29,17 +26,14 @@ loginBtn.addEventListener("click", async () => {
         );
 
         const data = await response.json();
-        console.log("Backend response:", data);
 
         if (data.status === "ok") {
-            alert("Успешная авторизация");
+            alert("Login successful");
         } else {
-            alert("Ошибка авторизации");
+            alert("Auth error");
         }
-    } catch (err) {
-        console.error(err);
-        alert("Ошибка соединения с сервером");
+    } catch (e) {
+        alert("Server connection error");
+        console.error(e);
     }
 });
-
-
