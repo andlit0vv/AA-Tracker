@@ -16,7 +16,13 @@ from flask_cors import CORS
 # =========================
 
 app = Flask(__name__)
-CORS(app)
+
+CORS(
+    app,
+    origins=[
+        "https://andlit0vv.github.io"
+    ]
+)
 
 
 # =========================
@@ -25,6 +31,8 @@ CORS(app)
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 DATABASE_URL = os.environ.get("DATABASE_URL")
+
+
 # =========================
 # Database
 # =========================
@@ -67,7 +75,7 @@ def ping():
 
 
 # =========================
-# Telegram auth
+# Telegram auth utils
 # =========================
 
 def check_telegram_auth(init_data: str) -> bool:
@@ -77,8 +85,6 @@ def check_telegram_auth(init_data: str) -> bool:
         return False
 
     received_hash = parsed_data.pop("hash")[0]
-
-    # signature не участвует
     parsed_data.pop("signature", None)
 
     data_check_string = "\n".join(
@@ -101,17 +107,22 @@ def check_telegram_auth(init_data: str) -> bool:
     return calculated_hash == received_hash
 
 
+# =========================
+# Auth endpoint
+# =========================
 
 @app.route("/auth/telegram", methods=["POST"])
 def auth_telegram():
     payload = request.get_json(force=True, silent=True) or {}
     init_data = payload.get("initData")
-    print("INIT DATA RAW:", init_data)  # ← ВАЖНО
+
+    print("INIT DATA RAW:", init_data)
+
     if not init_data:
-        return jsonify({"status": "error"}), 400
+        return jsonify({"status": "error", "reason": "no initData"}), 400
 
     if not check_telegram_auth(init_data):
-        return jsonify({"status": "error"}), 403
+        return jsonify({"status": "error", "reason": "invalid hash"}), 403
 
     parsed = parse_qs(init_data)
     user = json.loads(parsed["user"][0])
