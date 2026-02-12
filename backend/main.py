@@ -9,29 +9,11 @@ from flask_cors import CORS
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-# =========================
-# App init
-# =========================
-
 app = Flask(__name__)
-CORS(
-    app,
-    origins=[
-        "https://andlit0vv.github.io",
-        "https://andlit0vv.github.io/"  # если есть слеш
-    ]
-)
-
-# =========================
-# Environment
-# =========================
+CORS(app)
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 DATABASE_URL = os.environ.get("DATABASE_URL")
-
-# =========================
-# Database
-# =========================
 
 def get_db_connection():
     return psycopg2.connect(
@@ -58,10 +40,6 @@ def save_user(telegram_id: int, username: str | None, first_name: str | None):
     conn.commit()
     cur.close()
     conn.close()
-
-# =========================
-# Telegram auth utils
-# =========================
 
 def check_telegram_auth(init_data: str) -> bool:
     parsed_data = parse_qs(init_data)
@@ -90,10 +68,6 @@ def check_telegram_auth(init_data: str) -> bool:
 
     return calculated_hash == received_hash
 
-# =========================
-# Auth endpoint
-# =========================
-
 @app.route("/auth/telegram", methods=["POST"])
 def auth_telegram():
     payload = request.get_json(force=True, silent=True) or {}
@@ -118,25 +92,12 @@ def auth_telegram():
         first_name=first_name
     )
 
-    return jsonify({
-        "status": "ok",
-        "telegram_id": telegram_id,
-        "username": username,
-        "first_name": first_name
-    })
-
-# =========================
-# Tasks Endpoints
-# =========================
+    return jsonify({"status": "ok", "telegram_id": telegram_id})
 
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
-    """
-    GET /tasks?date=YYYY-MM-DD
-    Возвращает список задач пользователя на указанную дату.
-    """
     telegram_id = request.args.get("telegram_id", type=int)
-    date_str   = request.args.get("date")
+    date_str = request.args.get("date")
 
     if not date_str:
         return jsonify({"status": "error", "reason": "date is required"}), 400
@@ -144,7 +105,6 @@ def get_tasks():
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # если нет telegram_id — возвращаем задачи всех
     if telegram_id:
         cur.execute(
             """
@@ -175,24 +135,17 @@ def get_tasks():
 
 @app.route("/tasks", methods=["POST"])
 def create_task():
-    """
-    POST /tasks
-    Создаёт новую задачу.
-    body: { text: "...", date: "YYYY-MM-DD" }
-    """
     data = request.get_json(force=True) or {}
 
     text = data.get("text")
     date = data.get("date")
     telegram_id = data.get("telegram_id")
 
-    # text и date обязательны
     if not text or not date:
-        return jsonify({"status": "error", "reason": "text and date are required"}), 400
+        return jsonify({"status": "error", "reason": "text and date required"}), 400
 
-    # telegram_id должен быть числом
     if not telegram_id:
-        return jsonify({"status": "error", "reason": "telegram_id is required"}), 400
+        return jsonify({"status": "error", "reason": "telegram_id required"}), 400
 
     conn = get_db_connection()
     cur = conn.cursor()
@@ -207,18 +160,13 @@ def create_task():
     )
 
     new_task = cur.fetchone()
-
     conn.commit()
+
     cur.close()
     conn.close()
 
     return jsonify(new_task), 201
 
-# =========================
-# Server health
-# =========================
-
 @app.route("/ping")
 def ping():
     return jsonify({"status": "ok"})
-
