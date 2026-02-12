@@ -13,39 +13,28 @@
 
 <div class="app">
 
-    <!-- === Верхняя панель с календарём === -->
+    <!-- Header + Calendar strip -->
     <header class="header">
         <div class="calendar-toggle">
             <button id="toggle-calendar">📅 Показать календарь</button>
         </div>
 
-        <div id="calendar" class="calendar hidden">
-            <!-- Здесь будет календарь -->
-            <div class="calendar-days">
-                <!-- Дни генерируются в JS позже -->
-            </div>
-        </div>
+        <div id="calendar" class="calendar hidden"></div>
     </header>
 
-    <!-- === Основная область с задачами === -->
+    <!-- Main task list -->
     <main class="main-content">
-
         <div class="tasks-header">
             <h2>Задачи на день</h2>
         </div>
 
-        <ul id="tasks-list" class="tasks-list">
-            <!-- Список задач будет заполнен JS -->
-        </ul>
-
+        <ul id="tasks-list" class="tasks-list"></ul>
     </main>
 
-    <!-- === Большая кнопка создания задачи поверх контента === -->
-    <button id="add-task-btn" class="add-task-btn">
-        + Создать задачу
-    </button>
+    <!-- Floating button -->
+    <button id="add-task-btn" class="add-task-btn">+ Создать задачу</button>
 
-    <!-- === Нижняя панель навигации === -->
+    <!-- Bottom navigation -->
     <nav class="bottom-nav">
         <button class="nav-btn active">🏠 Главная</button>
         <button class="nav-btn">📆 Календарь</button>
@@ -54,25 +43,23 @@
 
 </div>
 
-<script src="frontend/static/main.js"></script>
-
-<!-- Модальное окно добавления задачи -->
+<!-- Modal for create task -->
 <div id="addTaskModal" class="modal hidden">
-  <div class="modal-overlay"></div>
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h3 class="modal-title">Создать задачу</h3>
 
-  <div class="modal-content">
-      <h3 class="modal-title">Создать задачу</h3>
-      
-      <textarea id="new-task-input"
-                placeholder="Введите текст задачи..."
-                class="task-input"></textarea>
+        <textarea id="new-task-input"
+                  placeholder="Введите текст задачи..."
+                  class="task-input"></textarea>
 
-      <div class="modal-actions">
-          <button id="save-task-btn" class="btn btn-primary">Сохранить</button>
-          <button id="cancel-task-btn" class="btn btn-secondary">Отмена</button>
-      </div>
-  </div>
+        <div class="modal-actions">
+            <button id="save-task-btn" class="btn btn-primary">Сохранить</button>
+            <button id="cancel-task-btn" class="btn btn-secondary">Отмена</button>
+        </div>
+    </div>
 </div>
 
+<script src="frontend/static/main.js"></script>
 </body>
 </html>
