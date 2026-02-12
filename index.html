@@ -5,20 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AA Task Manager</title>
 
+    <!-- Telegram WebApp API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- CSS -->
+    <!-- Подключение CSS -->
     <link rel="stylesheet" href="frontend/static/main.css">
 </head>
-
 <body>
 
-<div class="container">
-    <img src="frontend/static/chip.jpg" class="logo">
-    <h1>AA Manager</h1>
-    <button id="login-btn">Войти</button>
+<!-- === UI — контейнер всего приложения === -->
+<div class="app-container">
+
+    <!-- === Календарь (пока статичный) === -->
+    <section id="calendar-section">
+        <button id="toggle-calendar">📅 Показать/Скрыть календарь</button>
+        <div id="calendar-container"></div>
+    </section>
+
+    <!-- === Основная область задач === -->
+    <main id="tasks-section">
+        <h2>Ваши задачи</h2>
+        <ul id="tasks-list"></ul>
+        <button id="add-task-btn">+ Добавить задачу</button>
+    </main>
+
+    <!-- === Нижняя навигация === -->
+    <nav id="bottom-nav">
+        <button class="nav-btn" data-page="home">🏠 Главная</button>
+        <button class="nav-btn" data-page="calendar">📆 Календарь</button>
+        <button class="nav-btn" data-page="settings">⚙ Настройки</button>
+    </nav>
+
 </div>
 
+<!-- Логика JS -->
 <script src="frontend/static/main.js"></script>
 </body>
 </html>
