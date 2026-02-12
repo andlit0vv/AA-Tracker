@@ -4,7 +4,9 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
+// ===== Theme logic =====
 const THEME_KEY = "aa_task_theme";
+let currentUserId = null;  // сохраняем telegram_id
 
 function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
@@ -69,6 +71,11 @@ async function autoLogin() {
     const data = await tryTelegramLogin(initData);
     if (data.status === "ok") {
         hideLoginUI();
+
+        // сохраняем telegram_id
+        currentUserId = data.telegram_id;
+        localStorage.setItem("telegram_id", currentUserId);
+
         await loadTasksForToday();
     } else {
         showLoginUI();
@@ -80,7 +87,15 @@ const API_BASE = "https://aa-tracker.onrender.com";
 
 async function fetchTasks(date) {
     try {
-        const res = await fetch(`${API_BASE}/tasks?date=${date}`);
+        if (!currentUserId) {
+            currentUserId = localStorage.getItem("telegram_id");
+        }
+
+        const url = new URL(`${API_BASE}/tasks`);
+        url.searchParams.append("date", date);
+        url.searchParams.append("telegram_id", currentUserId);
+
+        const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to fetch tasks");
         const body = await res.json();
         return body.tasks || [];
@@ -134,6 +149,10 @@ saveTaskBtn?.addEventListener("click", async () => {
     }
 
     try {
+        if (!currentUserId) {
+            currentUserId = localStorage.getItem("telegram_id");
+        }
+
         const today = new Date().toISOString().split("T")[0];
 
         const res = await fetch(`${API_BASE}/tasks`, {
@@ -142,6 +161,7 @@ saveTaskBtn?.addEventListener("click", async () => {
             body: JSON.stringify({
                 text: text,
                 date: today,
+                telegram_id: currentUserId,
             }),
         });
 
@@ -155,7 +175,7 @@ saveTaskBtn?.addEventListener("click", async () => {
     }
 });
 
-// ===== theme toggle (if exists in HTML) =====
+// ===== theme toggle (если есть кнопка) =====
 document.getElementById("theme-toggle")?.addEventListener("click", () => {
     toggleTheme();
 });
