@@ -1,44 +1,59 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AA Task Manager</title>
 
-    <!-- Telegram WebApp API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- Подключение CSS -->
     <link rel="stylesheet" href="frontend/static/main.css">
 </head>
 <body>
 
-<!-- === UI — контейнер всего приложения === -->
-<div class="app-container">
+<div class="app">
 
-    <!-- === Календарь (пока статичный) === -->
-    <section id="calendar-section">
-        <button id="toggle-calendar">📅 Показать/Скрыть календарь</button>
-        <div id="calendar-container"></div>
-    </section>
+    <!-- === Верхняя панель с календарём === -->
+    <header class="header">
+        <div class="calendar-toggle">
+            <button id="toggle-calendar">📅 Показать календарь</button>
+        </div>
 
-    <!-- === Основная область задач === -->
-    <main id="tasks-section">
-        <h2>Ваши задачи</h2>
-        <ul id="tasks-list"></ul>
-        <button id="add-task-btn">+ Добавить задачу</button>
+        <div id="calendar" class="calendar hidden">
+            <!-- Здесь будет календарь -->
+            <div class="calendar-days">
+                <!-- Дни генерируются в JS позже -->
+            </div>
+        </div>
+    </header>
+
+    <!-- === Основная область с задачами === -->
+    <main class="main-content">
+
+        <div class="tasks-header">
+            <h2>Задачи на день</h2>
+        </div>
+
+        <ul id="tasks-list" class="tasks-list">
+            <!-- Список задач будет заполнен JS -->
+        </ul>
+
     </main>
 
-    <!-- === Нижняя навигация === -->
-    <nav id="bottom-nav">
-        <button class="nav-btn" data-page="home">🏠 Главная</button>
-        <button class="nav-btn" data-page="calendar">📆 Календарь</button>
-        <button class="nav-btn" data-page="settings">⚙ Настройки</button>
+    <!-- === Большая кнопка создания задачи поверх контента === -->
+    <button id="add-task-btn" class="add-task-btn">
+        + Создать задачу
+    </button>
+
+    <!-- === Нижняя панель навигации === -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active">🏠 Главная</button>
+        <button class="nav-btn">📆 Календарь</button>
+        <button class="nav-btn">⚙ Настройки</button>
     </nav>
 
 </div>
 
-<!-- Логика JS -->
 <script src="frontend/static/main.js"></script>
 </body>
 </html>
