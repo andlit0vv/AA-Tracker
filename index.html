@@ -55,5 +55,24 @@
 </div>
 
 <script src="frontend/static/main.js"></script>
+
+<!-- Модальное окно добавления задачи -->
+<div id="addTaskModal" class="modal hidden">
+  <div class="modal-overlay"></div>
+
+  <div class="modal-content">
+      <h3 class="modal-title">Создать задачу</h3>
+      
+      <textarea id="new-task-input"
+                placeholder="Введите текст задачи..."
+                class="task-input"></textarea>
+
+      <div class="modal-actions">
+          <button id="save-task-btn" class="btn btn-primary">Сохранить</button>
+          <button id="cancel-task-btn" class="btn btn-secondary">Отмена</button>
+      </div>
+  </div>
+</div>
+
 </body>
 </html>
