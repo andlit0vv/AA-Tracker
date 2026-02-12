@@ -4,7 +4,6 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// ===== Theme logic =====
 const THEME_KEY = "aa_task_theme";
 
 function applyTheme(theme) {
