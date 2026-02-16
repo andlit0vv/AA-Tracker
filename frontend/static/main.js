@@ -14,6 +14,9 @@ const DELETE_THRESHOLD = 220;
 // TASK RENDER WITH REAL DRAG
 // =====================================================
 
+const ACTION_WIDTH = 160;
+const DELETE_THRESHOLD = 260;
+
 function createSwipeItem(task) {
     const li = document.createElement("li");
     li.className = "swipe-wrapper";
@@ -34,48 +37,52 @@ function createSwipeItem(task) {
 
     let startX = 0;
     let currentX = 0;
-    let dragging = false;
+    let velocity = 0;
+    let lastTime = 0;
 
-    function closeItem() {
-        content.style.transform = `translateX(0px)`;
-        openItem = null;
+    function animateTo(x) {
+        content.style.transform = `translateX(${x}px)`;
     }
 
     function onStart(x) {
-        dragging = true;
         startX = x;
         currentX = x;
-
-        if (openItem && openItem !== content) {
-            openItem.style.transform = `translateX(0px)`;
-        }
-        openItem = content;
+        lastTime = Date.now();
+        content.style.transition = "none";
     }
 
     function onMove(x) {
-        if (!dragging) return;
+        const now = Date.now();
+        const dx = x - currentX;
+        velocity = dx / (now - lastTime + 1);
+
         currentX = x;
+        lastTime = now;
+
         let delta = currentX - startX;
 
         if (delta < 0) {
-            delta = Math.max(delta, -300);
-            content.style.transform = `translateX(${delta}px)`;
+            delta = Math.max(delta, -320);
+            animateTo(delta);
         }
     }
 
     async function onEnd() {
-        dragging = false;
+        content.style.transition = "transform 0.25s cubic-bezier(.22,1,.36,1)";
         let delta = currentX - startX;
 
-        if (delta < -DELETE_THRESHOLD) {
-            await deleteTask(task.id);
+        if (delta < -DELETE_THRESHOLD || velocity < -1.2) {
+            animateTo(-window.innerWidth);
+            setTimeout(async () => {
+                await deleteTask(task.id);
+            }, 200);
             return;
         }
 
         if (delta < -ACTION_WIDTH) {
-            content.style.transform = `translateX(-${ACTION_WIDTH}px)`;
+            animateTo(-ACTION_WIDTH);
         } else {
-            closeItem();
+            animateTo(0);
         }
     }
 
