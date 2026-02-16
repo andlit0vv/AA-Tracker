@@ -15,11 +15,17 @@ CORS(app)
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+
 def get_db_connection():
     return psycopg2.connect(
         DATABASE_URL,
         cursor_factory=RealDictCursor
     )
+
+
+# =====================================================
+# AUTH
+# =====================================================
 
 def save_user(telegram_id: int, username: str | None, first_name: str | None):
     conn = get_db_connection()
@@ -40,6 +46,7 @@ def save_user(telegram_id: int, username: str | None, first_name: str | None):
     conn.commit()
     cur.close()
     conn.close()
+
 
 def check_telegram_auth(init_data: str) -> bool:
     parsed_data = parse_qs(init_data)
@@ -68,16 +75,17 @@ def check_telegram_auth(init_data: str) -> bool:
 
     return calculated_hash == received_hash
 
+
 @app.route("/auth/telegram", methods=["POST"])
 def auth_telegram():
     payload = request.get_json(force=True, silent=True) or {}
     init_data = payload.get("initData")
 
     if not init_data:
-        return jsonify({"status": "error", "reason": "no initData"}), 400
+        return jsonify({"status": "error"}), 400
 
     if not check_telegram_auth(init_data):
-        return jsonify({"status": "error", "reason": "invalid hash"}), 403
+        return jsonify({"status": "error"}), 403
 
     parsed = parse_qs(init_data)
     user = json.loads(parsed["user"][0])
@@ -86,45 +94,35 @@ def auth_telegram():
     username = user.get("username")
     first_name = user.get("first_name")
 
-    save_user(
-        telegram_id=telegram_id,
-        username=username,
-        first_name=first_name
-    )
+    save_user(telegram_id, username, first_name)
 
     return jsonify({"status": "ok", "telegram_id": telegram_id})
+
+
+# =====================================================
+# TASKS
+# =====================================================
 
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
     telegram_id = request.args.get("telegram_id", type=int)
     date_str = request.args.get("date")
 
-    if not date_str:
-        return jsonify({"status": "error", "reason": "date is required"}), 400
+    if not telegram_id or not date_str:
+        return jsonify({"tasks": []})
 
     conn = get_db_connection()
     cur = conn.cursor()
 
-    if telegram_id:
-        cur.execute(
-            """
-            SELECT id, text, date
-            FROM tasks
-            WHERE telegram_id = %s AND date = %s
-            ORDER BY id DESC
-            """,
-            (telegram_id, date_str)
-        )
-    else:
-        cur.execute(
-            """
-            SELECT id, text, date
-            FROM tasks
-            WHERE date = %s
-            ORDER BY id DESC
-            """,
-            (date_str,)
-        )
+    cur.execute(
+        """
+        SELECT id, text, date, done
+        FROM tasks
+        WHERE telegram_id = %s AND date = %s
+        ORDER BY id DESC
+        """,
+        (telegram_id, date_str)
+    )
 
     tasks = cur.fetchall()
 
@@ -132,6 +130,7 @@ def get_tasks():
     conn.close()
 
     return jsonify({"tasks": tasks})
+
 
 @app.route("/tasks", methods=["POST"])
 def create_task():
@@ -141,20 +140,17 @@ def create_task():
     date = data.get("date")
     telegram_id = data.get("telegram_id")
 
-    if not text or not date:
-        return jsonify({"status": "error", "reason": "text and date required"}), 400
-
-    if not telegram_id:
-        return jsonify({"status": "error", "reason": "telegram_id required"}), 400
+    if not text or not date or not telegram_id:
+        return jsonify({"status": "error"}), 400
 
     conn = get_db_connection()
     cur = conn.cursor()
 
     cur.execute(
         """
-        INSERT INTO tasks (telegram_id, text, date)
-        VALUES (%s, %s, %s)
-        RETURNING id, text, date
+        INSERT INTO tasks (telegram_id, text, date, done)
+        VALUES (%s, %s, %s, FALSE)
+        RETURNING id, text, date, done
         """,
         (telegram_id, text, date)
     )
@@ -167,6 +163,44 @@ def create_task():
 
     return jsonify(new_task), 201
 
-@app.route("/ping")
-def ping():
-    return jsonify({"status": "ok"})
+
+@app.route("/tasks/<int:task_id>/toggle", methods=["PUT"])
+def toggle_task(task_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        UPDATE tasks
+        SET done = NOT done
+        WHERE id = %s
+        RETURNING id, done
+        """,
+        (task_id,)
+    )
+
+    updated = cur.fetchone()
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return jsonify(updated)
+
+
+@app.route("/tasks/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "DELETE FROM tasks WHERE id = %s",
+        (task_id,)
+    )
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return jsonify({"status": "deleted"})
