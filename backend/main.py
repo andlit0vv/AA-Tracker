@@ -204,3 +204,34 @@ def delete_task(task_id):
     conn.close()
 
     return jsonify({"status": "deleted"})
+
+# --- добавьте в раздел TASKS ---
+
+@app.route("/tasks/<int:task_id>", methods=["PUT"])
+def update_task(task_id):
+    data = request.get_json(force=True) or {}
+    text = data.get("text")
+
+    if not text:
+        return jsonify({"status": "error"}), 400
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        UPDATE tasks
+        SET text = %s
+        WHERE id = %s
+        RETURNING id, text, date, done
+        """,
+        (text, task_id)
+    )
+
+    updated = cur.fetchone()
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return jsonify(updated)
