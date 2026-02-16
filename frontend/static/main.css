@@ -341,3 +341,45 @@ html[data-theme="light"] {
     text-decoration: line-through;
 }
 
+.swipe-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.swipe-content {
+    background: var(--color-card-bg);
+    padding: 14px 16px;
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.swipe-content.done {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+.swipe-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    z-index: 1;
+}
+
+.edit-btn {
+    background: #3399ff;
+    color: white;
+    border: none;
+    padding: 0 20px;
+}
+
+.delete-btn {
+    background: #ff3b30;
+    color: white;
+    border: none;
+    padding: 0 20px;
+}
+
