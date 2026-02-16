@@ -13,27 +13,34 @@
 
 <div class="app">
 
+    <!-- ================= HEADER ================= -->
     <header class="header">
         <div class="calendar-toggle">
             <button id="toggle-calendar">📅 Показать календарь</button>
         </div>
 
+        <!-- Горизонтальный календарь -->
         <div id="calendar" class="calendar hidden"></div>
     </header>
 
-    <!-- Main task list -->
+
+    <!-- ================= MAIN TASK LIST ================= -->
     <main class="main-content">
         <div class="tasks-header">
-            <h2>Задачи на день</h2>
+            <h2 id="tasks-title">Задачи на день</h2>
         </div>
 
         <ul id="tasks-list" class="tasks-list"></ul>
     </main>
 
-    <!-- Floating button -->
-    <button id="add-task-btn" class="add-task-btn">+ Создать задачу</button>
 
-    <!-- Bottom navigation -->
+    <!-- ================= FLOATING BUTTON ================= -->
+    <button id="add-task-btn" class="add-task-btn">
+        + Создать задачу
+    </button>
+
+
+    <!-- ================= BOTTOM NAV ================= -->
     <nav class="bottom-nav">
         <button class="nav-btn active">🏠 Главная</button>
         <button class="nav-btn">📆 Календарь</button>
@@ -42,23 +49,34 @@
 
 </div>
 
-<!-- Modal for create task -->
+
+<!-- ================= MODAL ================= -->
 <div id="addTaskModal" class="modal hidden">
     <div class="modal-overlay"></div>
+
     <div class="modal-content">
         <h3 class="modal-title">Создать задачу</h3>
 
-        <textarea id="new-task-input"
-                  placeholder="Введите текст задачи..."
-                  class="task-input"></textarea>
+        <textarea
+            id="new-task-input"
+            placeholder="Введите текст задачи..."
+            class="task-input"
+        ></textarea>
 
         <div class="modal-actions">
-            <button id="save-task-btn" class="btn btn-primary">Сохранить</button>
-            <button id="cancel-task-btn" class="btn btn-secondary">Отмена</button>
+            <button id="save-task-btn" class="btn btn-primary">
+                Сохранить
+            </button>
+            <button id="cancel-task-btn" class="btn btn-secondary">
+                Отмена
+            </button>
         </div>
     </div>
 </div>
 
+
+<!-- ================= MAIN JS ================= -->
 <script src="frontend/static/main.js"></script>
+
 </body>
 </html>
