@@ -320,3 +320,20 @@ html[data-theme="light"] {
     display: none;
 }
 
+.hidden {
+    display: none;
+}
+
+.calendar-day small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 2px;
+}
+
+.tasks-list li.empty {
+    opacity: 0.6;
+    text-align: center;
+}
+
+
