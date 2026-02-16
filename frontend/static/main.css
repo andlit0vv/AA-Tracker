@@ -1,37 +1,102 @@
+:root {
+    --bg: #0f1115;
+    --card: #1b1f27;
+    --card-light: #232834;
+    --accent: #4da3ff;
+    --danger: #ff3b30;
+    --text: #f5f7fa;
+    --muted: #9aa4b2;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(circle at top, #1a1d25 0%, #0f1115 60%);
+    color: var(--text);
+}
+
+.main-content {
+    padding: 16px;
+}
+
+.tasks-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* ===== Swipe Card ===== */
+
 .swipe-wrapper {
     position: relative;
     overflow: hidden;
+    border-radius: 18px;
 }
 
 .swipe-actions {
     position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 140px;
+    inset: 0;
     display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 12px;
+    align-items: center;
+    background: linear-gradient(90deg, transparent, #1b1f27 30%);
+}
+
+.edit-btn,
+.delete-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .edit-btn {
-    flex: 1;
-    background: #3399ff;
-    color: white;
-    border: none;
+    background: rgba(77,163,255,0.15);
+    color: var(--accent);
+    backdrop-filter: blur(10px);
 }
 
 .delete-btn {
-    flex: 1;
-    background: #ff3b30;
+    background: linear-gradient(135deg, #ff4b4b, #ff2d2d);
     color: white;
-    border: none;
 }
 
 .swipe-content {
-    background: var(--color-card-bg);
-    padding: 14px 16px;
-    border-radius: 12px;
-    transition: transform 0.2s ease;
-    position: relative;
-    z-index: 2;
+    background: var(--card);
+    border-radius: 18px;
+    padding: 18px 20px;
+    font-size: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    transition: transform 0.25s cubic-bezier(.22,1,.36,1);
     touch-action: pan-y;
+}
+
+.swipe-content.done {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+/* ===== Floating Button ===== */
+
+.add-task-btn {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 420px;
+    padding: 16px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #4da3ff, #1f7bff);
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(77,163,255,0.4);
 }
