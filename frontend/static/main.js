@@ -1,14 +1,16 @@
-// ===== Telegram Init =====
+// =====================================================
+// TELEGRAM INIT
+// =====================================================
+
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-// ===== Config =====
 const API_BASE = "https://aa-tracker.onrender.com";
 const THEME_KEY = "aa_task_theme";
 
 let currentUserId = null;
-let activeDate = new Date().toISOString().split("T")[0]; // текущая выбранная дата
+let activeDate = new Date().toISOString().split("T")[0]; // выбранная дата
 
 
 // =====================================================
@@ -61,14 +63,13 @@ async function tryTelegramLogin(initData) {
         });
         return await response.json();
     } catch (error) {
-        console.error("Server connection error:", error);
+        console.error("Auth error:", error);
         return { status: "error" };
     }
 }
 
 async function autoLogin() {
     const initData = tg.initData;
-
     if (!initData) return;
 
     const data = await tryTelegramLogin(initData);
@@ -185,10 +186,17 @@ async function loadTasksForDate(date) {
     try {
         const tasks = await fetchTasks(date);
         renderTasks(tasks);
+        updateTitle(date);
     } catch (err) {
         console.error("Load tasks error:", err);
         renderTasks([]);
     }
+}
+
+function updateTitle(date) {
+    const el = document.getElementById("tasks-title");
+    const d = new Date(date);
+    el.textContent = `Задачи на ${d.toLocaleDateString("ru-RU")}`;
 }
 
 
@@ -224,12 +232,12 @@ function setupModal() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     text,
-                    date: activeDate, // теперь создаётся для выбранной даты
+                    date: activeDate, // ключевой момент
                     telegram_id: currentUserId,
                 }),
             });
 
-            if (!res.ok) throw new Error("Ошибка создания");
+            if (!res.ok) throw new Error("Create error");
 
             addTaskModal.classList.add("hidden");
             await loadTasksForDate(activeDate);
@@ -243,7 +251,7 @@ function setupModal() {
 
 
 // =====================================================
-// THEME TOGGLE (если добавите кнопку)
+// THEME TOGGLE
 // =====================================================
 
 document.getElementById("theme-toggle")?.addEventListener("click", toggleTheme);
