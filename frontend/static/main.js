@@ -178,9 +178,35 @@ function renderTasks(tasks) {
         const li = document.createElement("li");
         li.textContent = task.text;
         li.dataset.id = task.id;
+
+        if (task.done) {
+            li.classList.add("done");
+        }
+
+        // Toggle done
+        li.addEventListener("click", async () => {
+            await fetch(`${API_BASE}/tasks/${task.id}/toggle`, {
+                method: "PUT"
+            });
+            await loadTasksForDate(activeDate);
+        });
+
+        // Delete (правый клик)
+        li.addEventListener("contextmenu", async (e) => {
+            e.preventDefault();
+            if (!confirm("Удалить задачу?")) return;
+
+            await fetch(`${API_BASE}/tasks/${task.id}`, {
+                method: "DELETE"
+            });
+
+            await loadTasksForDate(activeDate);
+        });
+
         list.appendChild(li);
     });
 }
+
 
 async function loadTasksForDate(date) {
     try {
