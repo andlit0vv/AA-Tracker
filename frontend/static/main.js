@@ -1,7 +1,4 @@
-// Полный рабочий drag-swipe с порогами
-// Поддержка touch + mouse
-// Закрытие других элементов
-// Strong swipe = delete
+
 
 const API_BASE = "https://aa-tracker.onrender.com";
 
