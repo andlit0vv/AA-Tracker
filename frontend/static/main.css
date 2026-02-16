@@ -336,4 +336,8 @@ html[data-theme="light"] {
     text-align: center;
 }
 
+.tasks-list li.done {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
 
