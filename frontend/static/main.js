@@ -11,7 +11,6 @@ let editingTaskId = null;
 // =====================================================
 // INIT
 // =====================================================
-
 document.addEventListener("DOMContentLoaded", async () => {
     await autoLogin();
     setupModal();
